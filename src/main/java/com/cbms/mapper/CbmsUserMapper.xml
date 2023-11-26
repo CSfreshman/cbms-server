@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbms.mapper.CbmsUserMapper">
+
+    <resultMap type="com.cbms.entity.CbmsUser" id="CbmsUserResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+
+    <sql id="selectCbmsUserVo">
+        select id, name, phone from cbms_user
+    </sql>
+
+    <select id="selectCbmsUserList" parameterType="com.cbms.entity.CbmsUser" resultMap="CbmsUserResult">
+        <include refid="selectCbmsUserVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+        </where>
+    </select>
+
+    <select id="selectCbmsUserById" parameterType="Long" resultMap="CbmsUserResult">
+        <include refid="selectCbmsUserVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCbmsUser" parameterType="com.cbms.entity.CbmsUser">
+        insert into cbms_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCbmsUser" parameterType="com.cbms.entity.CbmsUser">
+        update cbms_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCbmsUserById" parameterType="Long">
+        delete from cbms_user where id = #{id}
+    </delete>
+
+    <delete id="deleteCbmsUserByIds" parameterType="String">
+        delete from cbms_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbms.mapper.CbmsProjectMapper">
+    <resultMap type="com.cbms.entity.CbmsProject" id="CbmsProjectResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="desc" column="desc"/>
+    </resultMap>
+
+    <sql id="selectCbmsProjectVo">
+        select id, name, price, `desc`
+        from cbms_project
+    </sql>
+
+    <select id="selectCbmsProjectList" parameterType="com.cbms.entity.CbmsProject" resultMap="CbmsProjectResult">
+        <include refid="selectCbmsProjectVo"/>
+        <where>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="desc != null  and desc != ''">and `desc` = #{desc}</if>
+        </where>
+    </select>
+
+    <select id="selectCbmsProjectById" parameterType="Long" resultMap="CbmsProjectResult">
+        <include refid="selectCbmsProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCbmsProject" parameterType="com.cbms.entity.CbmsProject">
+        insert into cbms_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="price != null">price,</if>
+            <if test="desc != null and desc != ''">`desc`,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="price != null">#{price},</if>
+            <if test="desc != null and desc != ''">#{desc},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCbmsProject" parameterType="com.cbms.entity.CbmsProject">
+        update cbms_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="desc != null and desc != ''">`desc` = #{desc},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCbmsProjectById" parameterType="Long">
+        delete
+        from cbms_project
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCbmsProjectByIds" parameterType="String">
+        delete from cbms_project where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

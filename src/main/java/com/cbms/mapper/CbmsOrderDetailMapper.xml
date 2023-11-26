@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbms.mapper.CbmsOrderDetailMapper">
+    <resultMap type="com.cbms.entity.CbmsOrderDetail" id="CbmsOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="price"    column="price"    />
+        <result property="realPrice"    column="real_price"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="count"    column="count"    />
+    </resultMap>
+
+    <sql id="selectCbmsOrderDetailVo">
+        select id, order_id, order_code, project_id, price, real_price, create_time, count from cbms_order_detail
+    </sql>
+
+    <select id="selectCbmsOrderDetailList" parameterType="com.cbms.entity.CbmsOrderDetail" resultMap="CbmsOrderDetailResult">
+        select cbms_order_detail.id, order_id, order_code, project_id, cbms_order_detail.price, real_price, create_time, cbms_order_detail.count, cbms_project.name as project_name
+        from cbms_order_detail left join cbms_project
+        on cbms_order_detail.project_id = cbms_project.id
+        <where>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="orderCode != null  and orderCode != ''"> and order_code = #{orderCode}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="realPrice != null "> and real_price = #{realPrice}</if>
+        </where>
+    </select>
+
+    <select id="selectCbmsOrderDetailById" parameterType="Long" resultMap="CbmsOrderDetailResult">
+        <include refid="selectCbmsOrderDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCbmsOrderDetail" parameterType="com.cbms.entity.CbmsOrderDetail">
+        insert into cbms_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="orderCode != null and orderCode != ''">order_code,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="price != null">price,</if>
+            <if test="realPrice != null">real_price,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="count != null">`count`,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="orderCode != null and orderCode != ''">#{orderCode},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="price != null">#{price},</if>
+            <if test="realPrice != null">#{realPrice},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="count != null">#{count},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCbmsOrderDetail" parameterType="com.cbms.entity.CbmsOrderDetail">
+        update cbms_order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="orderCode != null and orderCode != ''">order_code = #{orderCode},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="realPrice != null">real_price = #{realPrice},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="count != null">create_time = #{count},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCbmsOrderDetailById" parameterType="Long">
+        delete from cbms_order_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteCbmsOrderDetailByIds" parameterType="String">
+        delete from cbms_order_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

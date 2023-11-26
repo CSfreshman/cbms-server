@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbms.mapper.CbmsOrderMapper">
+
+    <resultMap type="com.cbms.entity.CbmsOrder" id="CbmsOrderResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payCode"    column="pay_code"    />
+        <result property="payState"    column="pay_state"    />
+        <result property="phone"    column="phone"    />
+        <result property="carCode"    column="car_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="realPrice"    column="real_price"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectCbmsOrderVo">
+        select id, code, pay_type, pay_code, pay_state, phone, car_code, create_time, update_time, total_price, real_price, user_id from cbms_order
+    </sql>
+
+    <select id="selectCbmsOrderList" parameterType="com.cbms.entity.CbmsOrder" resultMap="CbmsOrderResult">
+        <include refid="selectCbmsOrderVo"/>
+        <where>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="payType != null "> and pay_type = #{payType}</if>
+            <if test="payCode != null  and payCode != ''"> and pay_code = #{payCode}</if>
+            <if test="payState != null "> and pay_state = #{payState}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="carCode != null  and carCode != ''"> and car_code = #{carCode}</if>
+            <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
+            <if test="realPrice != null "> and real_price = #{realPrice}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectCbmsOrderById" parameterType="Long" resultMap="CbmsOrderResult">
+        <include refid="selectCbmsOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCbmsOrder" parameterType="com.cbms.entity.CbmsOrder">
+        insert into cbms_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="code != null and code != ''">code,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="payCode != null and payCode != ''">pay_code,</if>
+            <if test="payState != null">pay_state,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="carCode != null and carCode != ''">car_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="realPrice != null">real_price,</if>
+            <if test="userId != null">user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payCode != null and payCode != ''">#{payCode},</if>
+            <if test="payState != null">#{payState},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="carCode != null and carCode != ''">#{carCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="realPrice != null">#{realPrice},</if>
+            <if test="userId != null">#{userId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCbmsOrder" parameterType="com.cbms.entity.CbmsOrder">
+        update cbms_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="payCode != null and payCode != ''">pay_code = #{payCode},</if>
+            <if test="payState != null">pay_state = #{payState},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="carCode != null and carCode != ''">car_code = #{carCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="realPrice != null">real_price = #{realPrice},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCbmsOrderById" parameterType="Long">
+        delete from cbms_order where id = #{id}
+    </delete>
+
+    <delete id="deleteCbmsOrderByIds" parameterType="String">
+        delete from cbms_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -4,7 +4,12 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cbms.controller.PayReq;
 import com.cbms.controller.ShopData;
 import com.cbms.controller.ShopReq;
 import com.cbms.core.AjaxResult;
@@ -13,9 +18,12 @@ import com.cbms.mapper.CbmsOrderDetailMapper;
 import com.cbms.mapper.CbmsOrderMapper;
 import com.cbms.mapper.CbmsUserMapper;
 import com.cbms.service.CbmsShopService;
+import com.cbms.util.PayUtil;
 import com.cbms.util.utils.DateUtils;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -142,35 +150,53 @@ public class CbmsShopServiceImpl implements CbmsShopService {
             return AjaxResult.error("订单生成失败");
         }
         // 生成子单数据
-            ShopData cartData = req.getCartData();
-            List<CbmsOrderDetail> details = new ArrayList<>();
-            for (CbmsShopCart project : cartData.getProjects()) {
-                CbmsOrderDetail detail = new CbmsOrderDetail();
-                detail.setId(IdUtil.getSnowflakeNextId());
-                detail.setOrderId(order.getId());
-                detail.setOrderCode(order.getCode());
-                detail.setProjectId(project.getId());
-                // 单价
-                detail.setPrice(project.getPrice());
-                // 数量
-                detail.setCount(project.getNum());
-                // 总价
-                detail.setRealPrice(project.getPrice().multiply(BigDecimal.valueOf(project.getNum())));
-                detail.setCreateTime(DateUtils.getNowDate());
-                details.add(detail);
+        ShopData cartData = req.getCartData();
+        List<CbmsOrderDetail> details = new ArrayList<>();
+        for (CbmsShopCart project : cartData.getProjects()) {
+            CbmsOrderDetail detail = new CbmsOrderDetail();
+            detail.setId(IdUtil.getSnowflakeNextId());
+            detail.setOrderId(order.getId());
+            detail.setOrderCode(order.getCode());
+            detail.setProjectId(project.getId());
+            // 单价
+            detail.setPrice(project.getPrice());
+            // 数量
+            detail.setCount(project.getNum());
+            // 总价
+            detail.setRealPrice(project.getPrice().multiply(BigDecimal.valueOf(project.getNum())));
+            detail.setCreateTime(DateUtils.getNowDate());
+            details.add(detail);
 
-                int i1 = orderDetailMapper.insertCbmsOrderDetail(detail);
-                if(i1 == 0){
-                    return AjaxResult.error("子单插入失败");
-                }
+            int i1 = orderDetailMapper.insertCbmsOrderDetail(detail);
+            if(i1 == 0){
+                return AjaxResult.error("子单插入失败");
             }
-            // 应该批量插入
+        }
+        // 应该批量插入
 
 
 
         // 2.删除购物车数据
         stringRedisTemplate.delete(ShopCartKey);
-        return AjaxResult.success();
+        return AjaxResult.success(order);
+    }
+
+    // 支付宝支付
+    @Override
+    public AjaxResult pay(String orderCode) {
+        CbmsOrder order = orderMapper.selectOne(new LambdaQueryWrapper<CbmsOrder>().eq(CbmsOrder::getCode,orderCode));
+        if(ObjectUtil.isEmpty(order)){
+            return AjaxResult.error("查无订单");
+        }
+        if(order.getPayState() != 1){
+            return AjaxResult.error("订单不处于待支付状态");
+        }
+
+        String alipayResp = PayUtil.alipay(order.getCode(), order.getRealPrice().toString(), order.getCarCode(), order.getCarCode());
+
+        System.out.println(alipayResp);
+        return AjaxResult.success(alipayResp);
+
     }
 
     private String getCode(){

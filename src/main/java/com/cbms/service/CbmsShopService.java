@@ -1,6 +1,7 @@
 package com.cbms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cbms.controller.PayReq;
 import com.cbms.controller.ShopData;
 import com.cbms.controller.ShopReq;
 import com.cbms.core.AjaxResult;
@@ -15,4 +16,6 @@ public interface CbmsShopService {
     AjaxResult updateNum(ShopReq req);
 
     AjaxResult doOrder(ShopReq req);
+
+    AjaxResult pay(String orderCode);
 }

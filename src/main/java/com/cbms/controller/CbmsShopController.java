@@ -57,9 +57,5 @@ public class CbmsShopController {
         httpResponse.getWriter().close();
     }
 
-    // 支付成功同步回调
-    @GetMapping("/return")
-    public String successReturn(){
-        return "/return.html";
-    }
+
 }

@@ -199,6 +199,11 @@ public class CbmsShopServiceImpl implements CbmsShopService {
 
     }
 
+    @Override
+    public void cleanCart() {
+        stringRedisTemplate.delete(ShopCartKey);
+    }
+
     private String getCode(){
         String s = DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS, DateUtils.getNowDate());
         return s + count;

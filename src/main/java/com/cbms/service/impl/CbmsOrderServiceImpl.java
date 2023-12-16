@@ -1,11 +1,14 @@
 package com.cbms.service.impl;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cbms.entity.CbmsOrder;
 import com.cbms.entity.CbmsOrderDetail;
+import com.cbms.entity.CbmsUser;
 import com.cbms.mapper.CbmsOrderDetailMapper;
 import com.cbms.mapper.CbmsOrderMapper;
+import com.cbms.mapper.CbmsUserMapper;
 import com.cbms.service.ICbmsOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cbms.util.utils.DateUtils;
@@ -30,6 +33,10 @@ public class CbmsOrderServiceImpl extends ServiceImpl<CbmsOrderMapper, CbmsOrder
 
     @Autowired
     private CbmsOrderDetailMapper cbmsOrderDetailMapper;
+
+    @Autowired
+    private CbmsUserServiceImpl cbmsUserService;
+
     /**
      * 查询订单主
      *
@@ -44,6 +51,14 @@ public class CbmsOrderServiceImpl extends ServiceImpl<CbmsOrderMapper, CbmsOrder
         cbmsOrder.setOrderDetails(orderDetails);
         cbmsOrder.setCreateTimeStr(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,cbmsOrder.getCreateTime()));
         cbmsOrder.setUpdateTimeStr(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,cbmsOrder.getUpdateTime()));
+
+        cbmsOrder.setUserName("顾客:" + cbmsOrder.getPhone().substring(cbmsOrder.getPhone().length()-4));
+
+        CbmsUser byId = cbmsUserService.getById(cbmsOrder.getUserId());
+        if(ObjectUtil.isNotEmpty(byId)){
+            cbmsOrder.setUserName(byId.getName());
+        }
+
         return cbmsOrder;
     }
 
@@ -62,6 +77,13 @@ public class CbmsOrderServiceImpl extends ServiceImpl<CbmsOrderMapper, CbmsOrder
             order.setOrderDetails(orderDetails);
             order.setCreateTimeStr(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,order.getCreateTime()));
             order.setUpdateTimeStr(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,order.getUpdateTime()));
+
+            order.setUserName("顾客:" + order.getPhone().substring(order.getPhone().length()-4));
+
+            CbmsUser byId = cbmsUserService.getById(order.getUserId());
+            if(ObjectUtil.isNotEmpty(byId)){
+                order.setUserName(byId.getName());
+            }
         }
         return cbmsOrders;
     }

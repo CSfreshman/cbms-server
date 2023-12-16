@@ -57,5 +57,12 @@ public class CbmsShopController {
         httpResponse.getWriter().close();
     }
 
+    // 清空购物车
+    @PostMapping("/cleanCart")
+    public AjaxResult cleanCart(){
+        service.cleanCart();
+        return AjaxResult.success();
+    }
+
 
 }

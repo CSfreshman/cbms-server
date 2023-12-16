@@ -18,4 +18,6 @@ public interface CbmsShopService {
     AjaxResult doOrder(ShopReq req);
 
     AjaxResult pay(String orderCode);
+
+    void cleanCart();
 }

@@ -34,6 +34,7 @@
             <if test="realPrice != null "> and real_price = #{realPrice}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
         </where>
+        ORDER BY `create_time` DESC
     </select>
 
     <select id="selectCbmsOrderById" parameterType="Long" resultMap="CbmsOrderResult">

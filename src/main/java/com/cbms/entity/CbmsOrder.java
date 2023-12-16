@@ -85,6 +85,9 @@ public class CbmsOrder extends Model<CbmsOrder> {
     private Long userId;
 
     @TableField(exist = false)
+    private String userName;
+
+    @TableField(exist = false)
     private String createTimeStr;
 
     @TableField(exist = false)

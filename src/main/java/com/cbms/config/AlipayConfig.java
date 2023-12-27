@@ -27,7 +27,7 @@ public class AlipayConfig {
     public static String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiNl1v1Up6yLicgV2OVxGXIuiVPVSk65K/tCLFY3athE28aMBwyjZkJr6d5Owj+7oOsiRsWFfBLleY6XS4HDVkzuFdzGdL/I0hBITbdz4NFt5SiVpkqxOslMdl4QV2E7qMOrsMBQDDnvNs2lCKPdn6gygxwMJL9eSfnXL7AAZ3gyXeQpJRL6F7uKTVfjS8xpQKQj3djLA3t/PhAhIavL5+AHh4pqKw0xIKwmZx3zuHXzyOrUniLa9T7TJlFgoaZDK/Gjn2ooV4JJLu7XnfCy7tSGrCXiioV9gul6X90LmxQfV/rb7qwyTWtbrpj+J2Zy6MUCTb0scCp/zCpIGg7VR8QIDAQAB";
 
     // 回调地址baseUrl
-    public static String base_url = "http://bvwxtw.natappfree.cc";
+    public static String base_url = "http://vkcssy.natappfree.cc";
 
     // 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
     public static String notify_url = base_url + "/alipay/notify";

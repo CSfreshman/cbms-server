@@ -10,7 +10,10 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.cbms.config.AlipayConfig;
 
 public class PayUtil {
@@ -117,5 +120,36 @@ public class PayUtil {
             System.out.println("*********************验签失败********************");
             return false;
         }
+    }
+
+
+
+    // 查询订单支付结果
+    // 参考文档:https://opendocs.alipay.com/open/028woa?pathHash=e3ddce1d&scene=23&ref=api#6%20%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B
+    public static String queryPayState(String outTradeNo, String tradeNo, String[] query_options){
+        //获得初始化的AlipayClient
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
+
+        //设置请求参数
+        AlipayTradeQueryRequest alipayRequest = new AlipayTradeQueryRequest();
+        alipayRequest.setBizContent("{" +
+                "  \"out_trade_no\":\"" + outTradeNo + "\"," +
+                "  \"query_options\":[" +
+                "    \"trade_settle_info\"" +
+                "  ]" +
+                "}");
+
+        AlipayTradeQueryResponse response = null;
+        try {
+            response = alipayClient.execute(alipayRequest);
+            if(response.isSuccess()){
+                System.out.println("订单号"+outTradeNo+"查询成功");
+                //System.out.println(response);
+            }
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+
+        return response.getTradeStatus();
     }
 }

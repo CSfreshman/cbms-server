@@ -4,15 +4,14 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cbms.config.AlipayConfig;
+import com.cbms.core.AjaxResult;
 import com.cbms.entity.CbmsOrder;
 import com.cbms.service.ICbmsOrderService;
+import com.cbms.util.PayUtil;
 import com.cbms.util.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -81,4 +80,12 @@ public class AlipayController {
         return "failure";
     }
 
+    @ResponseBody
+    @PostMapping("/query")
+    public AjaxResult query(@RequestBody PayReq req){
+        System.out.println("查询订单状态"+req);
+        String payState = PayUtil.queryPayState(req.getOutTradeNo(), req.getTradeNo(), req.getQueryOptions());
+        System.out.println(payState);
+        return AjaxResult.success(payState);
+    }
 }
